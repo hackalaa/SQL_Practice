@@ -234,3 +234,30 @@ VALUES
     61.5404, 24.0535, '2023-03-23 10:18:48', 
     6, 'winterberry', 5
   );
+
+
+-- Tämänhetkiset käyttäjät
+SELECT käyttäjätunnus as "Käyttää tällä hetkellä dronea"
+FROM dronen_varaus
+WHERE lopetus_pvm is NULL
+
+-- Vapaat dronet
+SELECT id, nimi, merkki, malli, lisätieto
+FROM drone LEFT JOIN dronen_varaus
+ON drone.id = dronen_varaus.drone_id
+WHERE dronen_varaus.käyttäjätunnus is NULL
+
+-- Varatut dronet
+SELECT id, nimi, merkki, malli, lisätieto, käyttäjätunnus
+FROM drone RIGHT JOIN dronen_varaus
+ON drone.id = dronen_varaus.drone_id
+WHERE lopetus_pvm is NULL OR lopetus_pvm > NOW();
+
+-- Tietyn dronen ottamat kuvat ja käyttäjät
+SELECT drone.id, drone.nimi, merkki, malli, valokuva.nimi, käyttäjätunnus
+FROM drone, valokuva
+WHERE drone.id = valokuva.drone_id
+
+-- Kuvan ottanut drone, kuvan analyysi, käyttäjä, ajankohta ja paikkatiedot
+SELECT drone_id, käyttäjätunnus, leveysaste, pituusaste, analyysi, päivämäärä
+FROM valokuva
